@@ -1,0 +1,39 @@
+{
+  "name": "ddos-analytics-dashboard",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "antd": "^5.12.0",
+    "@ant-design/icons": "^5.2.6",
+    "@ant-design/charts": "^2.0.0",
+    "lucide-react": "^0.294.0",
+    "three": "^0.159.0",
+    "@types/three": "^0.159.0",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
+    "axios": "^1.6.2",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
+    "recharts": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@types/leaflet": "^1.9.8",
+    "@types/lodash": "^4.14.202",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "@types/node": "^20.10.4"
+  }
+}
