@@ -1,2 +1,2 @@
 # CVEs-DDos-Dashboard
-Awesome and insightful CVEs of DDos Dashboard 
+Awesome CVEs of DDos Dashboard 

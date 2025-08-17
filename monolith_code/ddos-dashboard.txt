@@ -1,0 +1,1199 @@
+// Advanced Interactive Simulation Engine
+class InteractiveSimulationEngine {
+  constructor() {
+    this.packetSimulation = this.initializePacketSimulation();
+    this.protocolDemos = this.initializeProtocolDemos();
+    this.botnetVisualization = this.initializeBotnetVisualization();
+    this.networkTopology = this.initializeNetworkTopology();
+  }
+
+  initializePacketSimulation() {
+    return {
+      protocols: {
+        'HTTP': {
+          packetSize: { min: 64, max: 1518 },
+          packetColor: '#e74c3c',
+          packetShape: 'rectangle',
+          frequency: 100, // packets per second
+          payload: 'HTTP/1.1 GET / HTTP/1.1\nHost: target.com\nUser-Agent: AttackBot\n\n',
+          attackPattern: 'burst',
+          amplificationFactor: 1,
+          characteristics: ['Large payload', 'Application layer', 'Stateful']
+        },
+        'DNS': {
+          packetSize: { min: 512, max: 4096 },
+          packetColor: '#3498db',
+          packetShape: 'hexagon',
+          frequency: 200,
+          payload: 'DNS Query: ANY *.target.com',
+          attackPattern: 'amplification',
+          amplificationFactor: 28,
+          characteristics: ['Amplification', 'UDP-based', 'Spoofable']
+        },
+        'UDP': {
+          packetSize: { min: 64, max: 65535 },
+          packetColor: '#f39c12',
+          packetShape: 'circle',
+          frequency: 500,
+          payload: 'Random UDP Data: ' + Array(50).fill('X').join(''),
+          attackPattern: 'flood',
+          amplificationFactor: 1,
+          characteristics: ['High volume', 'Connectionless', 'Fast']
+        },
+        'TCP': {
+          packetSize: { min: 64, max: 1460 },
+          packetColor: '#9b59b6',
+          packetShape: 'diamond',
+          frequency: 150,
+          payload: 'SYN Flood - Connection Request',
+          attackPattern: 'syn_flood',
+          amplificationFactor: 1,
+          characteristics: ['Connection-based', 'Stateful', 'Resource exhaustion']
+        },
+        'ICMP': {
+          packetSize: { min: 64, max: 1500 },
+          packetColor: '#27ae60',
+          packetShape: 'triangle',
+          frequency: 300,
+          payload: 'ICMP Echo Request - Ping Flood',
+          attackPattern: 'ping_flood',
+          amplificationFactor: 1,
+          characteristics: ['Simple', 'Network layer', 'Diagnostic protocol']
+        }
+      }
+    };
+  }
+
+  initializeProtocolDemos() {
+    return {
+      'HTTP_Flood': {
+        name: 'HTTP Flood Attack',
+        description: 'Overwhelming web servers with legitimate-looking HTTP requests',
+        difficulty: 'Advanced',
+        duration: 30, // seconds
+        steps: [
+          { time: 0, action: 'Initialize HTTP connections', description: 'Establish multiple TCP connections to target' },
+          { time: 5, action: 'Send GET requests', description: 'Flood server with HTTP GET requests' },
+          { time: 10, action: 'Vary request patterns', description: 'Randomize URLs and headers to bypass filters' },
+          { time: 15, action: 'Sustain attack', description: 'Maintain high request rate' },
+          { time: 20, action: 'Server overwhelmed', description: 'Target server becomes unresponsive' },
+          { time: 25, action: 'Defense activated', description: 'Rate limiting and filtering engaged' }
+        ],
+        metrics: {
+          requestsPerSecond: 10000,
+          connectionPool: 1000,
+          serverCpuUsage: 95,
+          responseTime: 30000
+        }
+      },
+      'DNS_Amplification': {
+        name: 'DNS Amplification Attack',
+        description: 'Using DNS servers to amplify attack traffic through spoofed requests',
+        difficulty: 'Intermediate',
+        duration: 25,
+        steps: [
+          { time: 0, action: 'Identify open resolvers', description: 'Scan for vulnerable DNS servers' },
+          { time: 3, action: 'Craft amplification query', description: 'Create large DNS ANY queries' },
+          { time: 6, action: 'Spoof source IP', description: 'Set victim IP as source address' },
+          { time: 10, action: 'Send queries to resolvers', description: 'Trigger amplified responses' },
+          { time: 15, action: 'Amplified traffic hits target', description: 'Large DNS responses flood victim' },
+          { time: 20, action: 'Mitigation deployed', description: 'BCP38 and rate limiting activated' }
+        ],
+        metrics: {
+          amplificationFactor: 28,
+          querySize: 64,
+          responseSize: 1792,
+          dnsServers: 1000
+        }
+      },
+      'SYN_Flood': {
+        name: 'TCP SYN Flood Attack',
+        description: 'Exhausting server connection resources with half-open TCP connections',
+        difficulty: 'Beginner',
+        duration: 20,
+        steps: [
+          { time: 0, action: 'Send SYN packets', description: 'Initiate TCP handshake requests' },
+          { time: 4, action: 'Ignore SYN-ACK', description: 'Do not complete handshake' },
+          { time: 8, action: 'Connection table fills', description: 'Server resources exhausted' },
+          { time: 12, action: 'Legitimate connections fail', description: 'Real users cannot connect' },
+          { time: 16, action: 'SYN cookies activated', description: 'Server deploys defense mechanism' }
+        ],
+        metrics: {
+          synPacketsPerSecond: 50000,
+          connectionTableSize: 65536,
+          halfOpenConnections: 65536,
+          legitimateConnectionsBlocked: 100
+        }
+      },
+      'Slowloris': {
+        name: 'Slowloris Attack',
+        description: 'Low-bandwidth application layer attack keeping connections alive',
+        difficulty: 'Advanced',
+        duration: 35,
+        steps: [
+          { time: 0, action: 'Open connections', description: 'Establish HTTP connections to target' },
+          { time: 5, action: 'Send partial headers', description: 'Send incomplete HTTP headers slowly' },
+          { time: 10, action: 'Keep connections alive', description: 'Periodically send more header data' },
+          { time: 15, action: 'Connection pool exhausted', description: 'Server cannot accept new connections' },
+          { time: 20, action: 'Legitimate users blocked', description: 'Real traffic cannot get through' },
+          { time: 25, action: 'Timeout detection', description: 'Server starts timing out slow connections' },
+          { time: 30, action: 'Connection limits enforced', description: 'Per-IP connection limits activated' }
+        ],
+        metrics: {
+          concurrentConnections: 500,
+          bandwidthUsed: '10 Kbps',
+          connectionDuration: 300,
+          serverThreadsBlocked: 500
+        }
+      }
+    };
+  }
+
+  initializeBotnetVisualization() {
+    return {
+      topology: {
+        commandControl: {
+          name: 'Command & Control Server',
+          ip: '45.142.214.123',
+          location: { country: 'Russia', city: 'Moscow', lat: 55.7558, lng: 37.6176 },
+          role: 'C&C',
+          status: 'Active',
+          connections: []
+        },
+        bots: [
+          { id: 'bot001', ip: '192.168.1.100', location: { country: 'US', city: 'New York', lat: 40.7128, lng: -74.0060 }, type: 'PC', status: 'Active', lastSeen: Date.now() },
+          { id: 'bot002', ip: '10.0.0.55', location: { country: 'UK', city: 'London', lat: 51.5074, lng: -0.1278 }, type: 'IoT Camera', status: 'Active', lastSeen: Date.now() },
+          { id: 'bot003', ip: '172.16.0.88', location: { country: 'Germany', city: 'Berlin', lat: 52.5200, lng: 13.4050 }, type: 'Router', status: 'Active', lastSeen: Date.now() },
+          { id: 'bot004', ip: '203.0.113.42', location: { country: 'Japan', city: 'Tokyo', lat: 35.6762, lng: 139.6503 }, type: 'Server', status: 'Active', lastSeen: Date.now() },
+          { id: 'bot005', ip: '198.51.100.77', location: { country: 'Australia', city: 'Sydney', lat: -33.8688, lng: 151.2093 }, type: 'DVR', status: 'Active', lastSeen: Date.now() },
+          { id: 'bot006', ip: '233.252.0.15', location: { country: 'Brazil', city: 'São Paulo', lat: -23.5505, lng: -46.6333 }, type: 'PC', status: 'Dormant', lastSeen: Date.now() - 3600000 },
+          { id: 'bot007', ip: '142.250.191.46', location: { country: 'Canada', city: 'Toronto', lat: 43.6532, lng: -79.3832 }, type: 'Smart TV', status: 'Active', lastSeen: Date.now() },
+          { id: 'bot008', ip: '185.199.108.153', location: { country: 'France', city: 'Paris', lat: 48.8566, lng: 2.3522 }, type: 'IoT Sensor', status: 'Active', lastSeen: Date.now() }
+        ],
+        target: {
+          name: 'Target Server',
+          ip: '203.0.113.100',
+          location: { country: 'US', city: 'San Francisco', lat: 37.7749, lng: -122.4194 },
+          role: 'Target',
+          status: 'Under Attack',
+          services: ['HTTP', 'HTTPS', 'DNS']
+        }
+      },
+      attackPhases: {
+        reconnaissance: { duration: 5, description: 'Scanning for vulnerabilities and mapping network' },
+        infection: { duration: 10, description: 'Deploying malware and establishing bot connections' },
+        coordination: { duration: 3, description: 'C&C server coordinates attack parameters' },
+        attack: { duration: 15, description: 'Distributed attack execution phase' },
+        sustainment: { duration: 12, description: 'Maintaining attack intensity and evading defenses' },
+        cleanup: { duration: 5, description: 'Covering tracks and maintaining persistent access' }
+      },
+      communicationProtocols: ['IRC', 'HTTP', 'P2P', 'DNS Tunneling', 'Encrypted Channels'],
+      botTypes: {
+        'PC': { count: 45000, capability: 'High', bandwidth: '100 Mbps' },
+        'IoT Camera': { count: 120000, capability: 'Medium', bandwidth: '10 Mbps' },
+        'Router': { count: 35000, capability: 'High', bandwidth: '1 Gbps' },
+        'Smart TV': { count: 28000, capability: 'Low', bandwidth: '25 Mbps' },
+        'DVR': { count: 67000, capability: 'Medium', bandwidth: '50 Mbps' }
+      }
+    };
+  }
+
+  initializeNetworkTopology() {
+    return {
+      layers: {
+        internet: { name: 'Internet Backbone', color: '#3498db', nodes: ['ISP-1', 'ISP-2', 'ISP-3'] },
+        transit: { name: 'Transit Networks', color: '#f39c12', nodes: ['Transit-A', 'Transit-B'] },
+        access: { name: 'Access Networks', color: '#27ae60', nodes: ['Access-1', 'Access-2', 'Access-3', 'Access-4'] },
+        edge: { name: 'Edge Devices', color: '#e74c3c', nodes: ['Router-1', 'Router-2', 'Firewall-1', 'CDN-1'] },
+        application: { name: 'Application Layer', color: '#9b59b6', nodes: ['Web-Server', 'DB-Server', 'API-Gateway'] }
+      },
+      connections: [
+        { from: 'ISP-1', to: 'Transit-A', bandwidth: '10 Gbps', latency: '5ms', utilization: 45 },
+        { from: 'ISP-2', to: 'Transit-B', bandwidth: '10 Gbps', latency: '8ms', utilization: 67 },
+        { from: 'Transit-A', to: 'Access-1', bandwidth: '1 Gbps', latency: '12ms', utilization: 89 },
+        { from: 'Transit-B', to: 'Access-2', bandwidth: '1 Gbps', latency: '15ms', utilization: 92 }
+      ],
+      attackFlow: {
+        source: 'Botnet',
+        path: ['Internet', 'Transit', 'Access', 'Edge', 'Application'],
+        intensity: { current: 0, max: 100 },
+        protocols: ['HTTP', 'DNS', 'UDP', 'TCP']
+      }
+    };
+  }
+
+  generatePacketFlow(protocol, intensity) {
+    const protocolData = this.packetSimulation.protocols[protocol];
+    if (!protocolData) return [];
+    
+    const packets = [];
+    const packetCount = Math.floor((protocolData.frequency * intensity) / 100);
+    
+    for (let i = 0; i < packetCount; i++) {
+      packets.push({
+        id: `packet_${Date.now()}_${i}`,
+        protocol,
+        size: Math.random() * (protocolData.packetSize.max - protocolData.packetSize.min) + protocolData.packetSize.min,
+        color: protocolData.packetColor,
+        shape: protocolData.packetShape,
+        payload: protocolData.payload,
+        timestamp: Date.now() + (i * 10), // Stagger packet timing
+        source: { x: 10, y: Math.random() * 80 + 10 },
+        destination: { x: 90, y: Math.random() * 80 + 10 },
+        progress: 0
+      });
+    }
+    
+    return packets;
+  }
+
+  calculateNetworkLoad(packets) {
+    const totalBandwidth = packets.reduce((sum, packet) => sum + packet.size, 0);
+    const protocolDistribution = {};
+    
+    packets.forEach(packet => {
+      protocolDistribution[packet.protocol] = (protocolDistribution[packet.protocol] || 0) + 1;
+    });
+    
+    return {
+      totalBandwidth: Math.round(totalBandwidth / 1024 / 1024 * 8), // Convert to Mbps
+      packetCount: packets.length,
+      protocolDistribution,
+      congestionLevel: Math.min(totalBandwidth / (1000 * 1024 * 1024) * 100, 100) // Percentage of 1 Gbps
+    };
+  }
+
+  simulateBotnetCoordination(phase) {
+    const botnet = this.botnetVisualization;
+    const activePhase = botnet.attackPhases[phase];
+    
+    return {
+      phase,
+      description: activePhase.description,
+      duration: activePhase.duration,
+      activeBots: botnet.topology.bots.filter(bot => bot.status === 'Active').length,
+      commands: this.generateBotnetCommands(phase),
+      trafficPattern: this.generateTrafficPattern(phase),
+      detectionRisk: this.calculateDetectionRisk(phase)
+    };
+  }
+
+  generateBotnetCommands(phase) {
+    const commands = {
+      reconnaissance: ['SCAN_PORTS', 'ENUM_SERVICES', 'CHECK_DEFENSES'],
+      infection: ['DOWNLOAD_PAYLOAD', 'ESTABLISH_PERSISTENCE', 'REPORT_STATUS'],
+      coordination: ['SYNC_CLOCKS', 'SET_TARGETS', 'CONFIGURE_ATTACK'],
+      attack: ['START_FLOOD', 'MAINTAIN_RATE', 'ROTATE_IPS'],
+      sustainment: ['ADAPT_PATTERNS', 'EVADE_FILTERS', 'MONITOR_DEFENSES'],
+      cleanup: ['CLEAR_LOGS', 'REMOVE_TRACES', 'MAINTAIN_ACCESS']
+    };
+    
+    return commands[phase] || [];
+  }
+
+  generateTrafficPattern(phase) {
+    const patterns = {
+      reconnaissance: { volume: 'Low', frequency: 'Irregular', stealth: 'High' },
+      infection: { volume: 'Medium', frequency: 'Burst', stealth: 'Medium' },
+      coordination: { volume: 'Low', frequency: 'Synchronized', stealth: 'High' },
+      attack: { volume: 'Very High', frequency: 'Sustained', stealth: 'Low' },
+      sustainment: { volume: 'High', frequency: 'Adaptive', stealth: 'Medium' },
+      cleanup: { volume: 'Low', frequency: 'Sparse', stealth: 'Very High' }
+    };
+    
+    return patterns[phase];
+  }
+
+  calculateDetectionRisk(phase) {
+    const risks = {
+      reconnaissance: 25,
+      infection: 45,
+      coordination: 30,
+      attack: 95,
+      sustainment: 80,
+      cleanup: 20
+    };
+    
+    return risks[phase];
+  }
+}
+  constructor() {
+    this.historicalData = this.initializeHistoricalData();
+    this.protocolAnalysis = this.initializeProtocolAnalysis();
+    this.sourceLanguageData = this.initializeSourceLanguageData();
+    this.attackVectorAnalysis = this.initializeAttackVectorAnalysis();
+    this.ddosSurfaceAnalysis = this.initializeDDoSSurfaceAnalysis();
+  }
+
+  initializeHistoricalData() {
+    const years = ['2019', '2020', '2021', '2022', '2023', '2024'];
+    const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+    
+    return {
+      yearlyTrends: {
+        2019: { totalAttacks: 8.4, avgSizeGbps: 25.2, topVector: 'UDP Flood', evolutionStage: 'Traditional' },
+        2020: { totalAttacks: 10.1, avgSizeGbps: 34.8, topVector: 'HTTP Flood', evolutionStage: 'Pandemic Surge' },
+        2021: { totalAttacks: 12.8, avgSizeGbps: 45.3, topVector: 'DNS Amplification', evolutionStage: 'Amplification Era' },
+        2022: { totalAttacks: 15.6, avgSizeGbps: 67.2, topVector: 'Volumetric Mix', evolutionStage: 'Multi-Vector' },
+        2023: { totalAttacks: 18.9, avgSizeGbps: 89.1, topVector: 'Botnet Coordination', evolutionStage: 'AI-Enhanced' },
+        2024: { totalAttacks: 23.4, avgSizeGbps: 112.7, topVector: 'Hybrid Attacks', evolutionStage: 'Advanced Persistent' }
+      },
+      quarterlyBreakdown: years.reduce((acc, year) => {
+        acc[year] = quarters.map((quarter, index) => ({
+          period: `${year}-${quarter}`,
+          attacks: Math.floor(Math.random() * 8 + 15 + index * 2),
+          averageSize: Math.floor(Math.random() * 30 + 40 + index * 10),
+          peakSize: Math.floor(Math.random() * 100 + 200 + index * 50),
+          primaryVector: ['Volumetric', 'Protocol', 'Application', 'Amplification'][index],
+          geographicHotspot: ['Asia-Pacific', 'North America', 'Europe', 'Global'][index]
+        }));
+        return acc;
+      }, {}),
+      monthlyData: this.generateMonthlyData(),
+      attackEvolution: {
+        2019: { sophistication: 3.2, automation: 2.8, attribution: 4.1, mitigation: 3.5 },
+        2020: { sophistication: 3.8, automation: 3.4, attribution: 4.3, mitigation: 3.7 },
+        2021: { sophistication: 4.5, automation: 4.2, attribution: 4.0, mitigation: 4.1 },
+        2022: { sophistication: 5.1, automation: 4.8, attribution: 3.8, mitigation: 4.4 },
+        2023: { sophistication: 5.8, automation: 5.5, attribution: 3.5, mitigation: 4.7 },
+        2024: { sophistication: 6.4, automation: 6.2, attribution: 3.2, mitigation: 5.1 }
+      }
+    };
+  }
+
+  generateMonthlyData() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const years = [2023, 2024];
+    
+    return years.reduce((acc, year) => {
+      acc[year] = months.map((month, index) => ({
+        month,
+        attacks: Math.floor(Math.random() * 5 + 15 + (year === 2024 ? 8 : 0)),
+        vulnerabilities: Math.floor(Math.random() * 20 + 80 + (year === 2024 ? 15 : 0)),
+        incidents: Math.floor(Math.random() * 3 + 5 + (year === 2024 ? 2 : 0)),
+        avgSeverity: (Math.random() * 2 + 6 + (year === 2024 ? 0.5 : 0)).toFixed(1)
+      }));
+      return acc;
+    }, {});
+  }
+
+  initializeProtocolAnalysis() {
+    return {
+      protocols: {
+        'HTTP/HTTPS': {
+          name: 'HTTP/HTTPS',
+          layer: 'Application Layer (Layer 7)',
+          prevalence: 34.2,
+          avgAttackSize: '15.3 Gbps',
+          complexity: 'High',
+          detectionDifficulty: 'Hard',
+          color: '#e74c3c',
+          attackMethods: ['HTTP Flood', 'Slowloris', 'HTTP POST Flood', 'HTTPS Flood'],
+          vulnerabilities: ['Server Resource Exhaustion', 'Connection Pool Depletion', 'SSL/TLS Overhead'],
+          mitigations: ['Rate Limiting', 'Behavioral Analysis', 'CAPTCHA', 'Geo-blocking'],
+          trends: { 2023: 31.5, 2024: 34.2, growth: '+8.6%' },
+          targetSectors: ['E-commerce', 'Media', 'Financial Services']
+        },
+        'DNS': {
+          name: 'DNS',
+          layer: 'Application Layer (Layer 7)',
+          prevalence: 28.7,
+          avgAttackSize: '89.4 Gbps',
+          complexity: 'Medium',
+          detectionDifficulty: 'Medium',
+          color: '#3498db',
+          attackMethods: ['DNS Amplification', 'DNS Flood', 'DNS Tunneling', 'DNS Cache Poisoning'],
+          vulnerabilities: ['Amplification Factor', 'Open Resolvers', 'Cache Limitations'],
+          mitigations: ['Response Rate Limiting', 'BCP38', 'Resolver Filtering', 'Anycast'],
+          trends: { 2023: 32.1, 2024: 28.7, growth: '-10.6%' },
+          targetSectors: ['ISPs', 'CDNs', 'Cloud Providers']
+        },
+        'UDP': {
+          name: 'UDP',
+          layer: 'Transport Layer (Layer 4)',
+          prevalence: 18.9,
+          avgAttackSize: '125.7 Gbps',
+          complexity: 'Low',
+          detectionDifficulty: 'Easy',
+          color: '#f39c12',
+          attackMethods: ['UDP Flood', 'UDP Amplification', 'Fragmented UDP', 'Random UDP'],
+          vulnerabilities: ['Connectionless Protocol', 'No Rate Control', 'Spoofing Ease'],
+          mitigations: ['Traffic Shaping', 'Port Filtering', 'Stateful Inspection', 'Blackholing'],
+          trends: { 2023: 22.3, 2024: 18.9, growth: '-15.2%' },
+          targetSectors: ['Gaming', 'VoIP', 'Streaming']
+        },
+        'TCP': {
+          name: 'TCP',
+          layer: 'Transport Layer (Layer 4)',
+          prevalence: 12.4,
+          avgAttackSize: '67.8 Gbps',
+          complexity: 'Medium',
+          detectionDifficulty: 'Medium',
+          color: '#9b59b6',
+          attackMethods: ['SYN Flood', 'TCP RST Attack', 'TCP Connection Flood', 'ACK Flood'],
+          vulnerabilities: ['Connection State Management', 'Handshake Process', 'Buffer Limitations'],
+          mitigations: ['SYN Cookies', 'Connection Limits', 'Proxy Protection', 'Behavioral Analysis'],
+          trends: { 2023: 14.8, 2024: 12.4, growth: '-16.2%' },
+          targetSectors: ['Web Services', 'Applications', 'APIs']
+        },
+        'ICMP': {
+          name: 'ICMP',
+          layer: 'Network Layer (Layer 3)',
+          prevalence: 5.8,
+          avgAttackSize: '45.2 Gbps',
+          complexity: 'Low',
+          detectionDifficulty: 'Easy',
+          color: '#27ae60',
+          attackMethods: ['ICMP Flood', 'Ping Flood', 'Smurf Attack', 'Ping of Death'],
+          vulnerabilities: ['No Authentication', 'Broadcast Amplification', 'Protocol Simplicity'],
+          mitigations: ['ICMP Rate Limiting', 'Broadcast Filtering', 'Protocol Blocking'],
+          trends: { 2023: 7.2, 2024: 5.8, growth: '-19.4%' },
+          targetSectors: ['Network Infrastructure', 'Routers', 'Firewalls']
+        }
+      },
+      layerAnalysis: {
+        'Layer 7 (Application)': { 
+          protocols: ['HTTP/HTTPS', 'DNS'], 
+          prevalence: 62.9, 
+          sophistication: 'High',
+          defenseDifficulty: 'Very Hard',
+          trends: 'Increasing'
+        },
+        'Layer 4 (Transport)': { 
+          protocols: ['UDP', 'TCP'], 
+          prevalence: 31.3, 
+          sophistication: 'Medium',
+          defenseDifficulty: 'Medium',
+          trends: 'Decreasing'
+        },
+        'Layer 3 (Network)': { 
+          protocols: ['ICMP'], 
+          prevalence: 5.8, 
+          sophistication: 'Low',
+          defenseDifficulty: 'Easy',
+          trends: 'Declining'
+        }
+      }
+    };
+  }
+
+  initializeSourceLanguageData() {
+    return {
+      languageCorrelation: {
+        'English': {
+          prevalence: 42.3,
+          primaryRegions: ['United States', 'United Kingdom', 'Australia', 'Canada'],
+          attackTypes: ['Financial', 'E-commerce', 'Government'],
+          sophistication: 'High',
+          tools: ['Custom Scripts', 'Commercial Tools', 'Botnets'],
+          trends: { 2023: 38.9, 2024: 42.3, growth: '+8.7%' },
+          color: '#3498db'
+        },
+        'Chinese': {
+          prevalence: 23.7,
+          primaryRegions: ['China', 'Taiwan', 'Hong Kong', 'Singapore'],
+          attackTypes: ['Technology', 'Gaming', 'Manufacturing'],
+          sophistication: 'Very High',
+          tools: ['State-sponsored', 'Advanced Persistent Threats', 'Zero-day Exploits'],
+          trends: { 2023: 21.4, 2024: 23.7, growth: '+10.7%' },
+          color: '#e74c3c'
+        },
+        'Russian': {
+          prevalence: 18.9,
+          primaryRegions: ['Russia', 'Belarus', 'Kazakhstan', 'Ukraine'],
+          attackTypes: ['Financial', 'Infrastructure', 'Political'],
+          sophistication: 'Very High',
+          tools: ['Military-grade', 'Ransomware', 'State-backed Groups'],
+          trends: { 2023: 22.1, 2024: 18.9, growth: '-14.5%' },
+          color: '#f39c12'
+        },
+        'Korean': {
+          prevalence: 8.4,
+          primaryRegions: ['South Korea', 'North Korea'],
+          attackTypes: ['Government', 'Financial', 'Media'],
+          sophistication: 'High',
+          tools: ['Nation-state Tools', 'Cryptocurrency Focus', 'Social Engineering'],
+          trends: { 2023: 7.1, 2024: 8.4, growth: '+18.3%' },
+          color: '#9b59b6'
+        },
+        'Arabic': {
+          prevalence: 4.2,
+          primaryRegions: ['Middle East', 'North Africa'],
+          attackTypes: ['Political', 'Religious', 'Regional Conflicts'],
+          sophistication: 'Medium',
+          tools: ['Hacktivist Tools', 'Religious Motivation', 'Regional Groups'],
+          trends: { 2023: 3.8, 2024: 4.2, growth: '+10.5%' },
+          color: '#27ae60'
+        },
+        'Portuguese': {
+          prevalence: 2.5,
+          primaryRegions: ['Brazil', 'Portugal'],
+          attackTypes: ['Financial', 'E-commerce', 'Banking'],
+          sophistication: 'Medium',
+          tools: ['Banking Trojans', 'Local Scripts', 'Regional Botnets'],
+          trends: { 2023: 2.9, 2024: 2.5, growth: '-13.8%' },
+          color: '#e67e22'
+        }
+      },
+      geolinguisticPatterns: {
+        'North America': { primaryLanguage: 'English', secondaryLanguage: 'Spanish', diversity: 'High' },
+        'Europe': { primaryLanguage: 'English', secondaryLanguage: 'Russian', diversity: 'Very High' },
+        'Asia-Pacific': { primaryLanguage: 'Chinese', secondaryLanguage: 'English', diversity: 'High' },
+        'Middle East': { primaryLanguage: 'Arabic', secondaryLanguage: 'English', diversity: 'Medium' },
+        'South America': { primaryLanguage: 'Portuguese', secondaryLanguage: 'Spanish', diversity: 'Low' }
+      }
+    };
+  }
+
+  initializeAttackVectorAnalysis() {
+    return {
+      vectors: {
+        'Volumetric': {
+          name: 'Volumetric Attacks',
+          description: 'Overwhelming bandwidth or resources through high-volume traffic',
+          prevalence: 45.3,
+          avgSizeGbps: 187.4,
+          duration: '2-6 hours',
+          complexity: 'Low to Medium',
+          color: '#e74c3c',
+          subTypes: ['UDP Flood', 'ICMP Flood', 'DNS Amplification', 'NTP Amplification'],
+          targets: ['Network Infrastructure', 'ISPs', 'CDNs'],
+          mitigations: ['Traffic Scrubbing', 'Rate Limiting', 'Blackholing', 'DDoS Protection Services'],
+          trends: { 2023: 41.7, 2024: 45.3, growth: '+8.6%' },
+          detectability: 'Easy',
+          businessImpact: 'High'
+        },
+        'Protocol': {
+          name: 'Protocol Attacks',
+          description: 'Exploiting weaknesses in network protocols and server resources',
+          prevalence: 28.7,
+          avgSizeGbps: 45.8,
+          duration: '1-4 hours',
+          complexity: 'Medium',
+          color: '#3498db',
+          subTypes: ['SYN Flood', 'TCP RST Attack', 'SACK Panic', 'Fragmented Packet Attack'],
+          targets: ['Web Servers', 'Load Balancers', 'Firewalls'],
+          mitigations: ['SYN Cookies', 'Connection Limits', 'Protocol Validation', 'Stateful Inspection'],
+          trends: { 2023: 32.1, 2024: 28.7, growth: '-10.6%' },
+          detectability: 'Medium',
+          businessImpact: 'Medium'
+        },
+        'Application Layer': {
+          name: 'Application Layer Attacks',
+          description: 'Targeting specific applications and services with legitimate-looking requests',
+          prevalence: 26.0,
+          avgSizeGbps: 8.3,
+          duration: '6-24 hours',
+          complexity: 'High',
+          color: '#f39c12',
+          subTypes: ['HTTP Flood', 'Slowloris', 'R.U.D.Y', 'HTTP POST Flood'],
+          targets: ['Web Applications', 'APIs', 'Database Servers'],
+          mitigations: ['Behavioral Analysis', 'CAPTCHA', 'Rate Limiting', 'Web Application Firewalls'],
+          trends: { 2023: 22.4, 2024: 26.0, growth: '+16.1%' },
+          detectability: 'Hard',
+          businessImpact: 'Very High'
+        }
+      },
+      attackComplexity: {
+        evolution: {
+          2019: { avgComplexity: 3.2, multiVector: 15.4, aiEnhanced: 2.1 },
+          2020: { avgComplexity: 3.7, multiVector: 18.9, aiEnhanced: 3.8 },
+          2021: { avgComplexity: 4.1, multiVector: 23.6, aiEnhanced: 6.2 },
+          2022: { avgComplexity: 4.6, multiVector: 29.8, aiEnhanced: 9.7 },
+          2023: { avgComplexity: 5.2, multiVector: 36.4, aiEnhanced: 14.3 },
+          2024: { avgComplexity: 5.8, multiVector: 43.7, aiEnhanced: 19.8 }
+        }
+      }
+    };
+  }
+
+  initializeDDoSSurfaceAnalysis() {
+    return {
+      attackSurfaces: {
+        'Network Infrastructure': {
+          name: 'Network Infrastructure',
+          exposure: 89.4,
+          vulnerabilityDensity: 'High',
+          criticalityScore: 9.2,
+          color: '#e74c3c',
+          components: ['Routers', 'Switches', 'Firewalls', 'Load Balancers'],
+          commonAttacks: ['BGP Hijacking', 'DNS Poisoning', 'Infrastructure Overload'],
+          mitigationLevel: 'Medium',
+          trends: { 2023: 85.7, 2024: 89.4, growth: '+4.3%' }
+        },
+        'Cloud Services': {
+          name: 'Cloud Services',
+          exposure: 76.8,
+          vulnerabilityDensity: 'Medium',
+          criticalityScore: 8.7,
+          color: '#3498db',
+          components: ['VM Instances', 'Container Services', 'API Gateways', 'CDNs'],
+          commonAttacks: ['API Abuse', 'Resource Exhaustion', 'Multi-tenant Attacks'],
+          mitigationLevel: 'High',
+          trends: { 2023: 71.2, 2024: 76.8, growth: '+7.9%' }
+        },
+        'IoT Devices': {
+          name: 'IoT Devices',
+          exposure: 68.3,
+          vulnerabilityDensity: 'Very High',
+          criticalityScore: 7.9,
+          color: '#f39c12',
+          components: ['Smart Cameras', 'Routers', 'Smart Home Devices', 'Industrial IoT'],
+          commonAttacks: ['Botnet Recruitment', 'Credential Stuffing', 'Firmware Exploits'],
+          mitigationLevel: 'Low',
+          trends: { 2023: 61.4, 2024: 68.3, growth: '+11.2%' }
+        },
+        'Web Applications': {
+          name: 'Web Applications',
+          exposure: 82.1,
+          vulnerabilityDensity: 'High',
+          criticalityScore: 8.5,
+          color: '#9b59b6',
+          components: ['Web Servers', 'Application Servers', 'Databases', 'APIs'],
+          commonAttacks: ['Application Layer DDoS', 'SQL Injection DDoS', 'API Abuse'],
+          mitigationLevel: 'Medium',
+          trends: { 2023: 79.6, 2024: 82.1, growth: '+3.1%' }
+        },
+        'Mobile Applications': {
+          name: 'Mobile Applications',
+          exposure: 45.7,
+          vulnerabilityDensity: 'Medium',
+          criticalityScore: 6.8,
+          color: '#27ae60',
+          components: ['Mobile Apps', 'Push Notification Services', 'Mobile APIs', 'App Stores'],
+          commonAttacks: ['API Flooding', 'Push Notification Abuse', 'Mobile Botnet'],
+          mitigationLevel: 'Medium',
+          trends: { 2023: 41.3, 2024: 45.7, growth: '+10.7%' }
+        }
+      }
+    };
+  }
+
+  getHistoricalTrends(timeframe = 'yearly') {
+    switch(timeframe) {
+      case 'yearly':
+        return this.historicalData.yearlyTrends;
+      case 'quarterly':
+        return this.historicalData.quarterlyBreakdown;
+      case 'monthly':
+        return this.historicalData.monthlyData;
+      default:
+        return this.historicalData.yearlyTrends;
+    }
+  }
+
+  getProtocolAnalysis() {
+    return this.protocolAnalysis;
+  }
+
+  getSourceLanguageAnalysis() {
+    return this.sourceLanguageData;
+  }
+
+  getAttackVectorTrends() {
+    return this.attackVectorAnalysis;
+  }
+
+  getDDoSSurfaceAnalysis() {
+    return this.ddosSurfaceAnalysis;
+  }
+
+  generatePredictiveAnalysis() {
+    const currentYear = 2024;
+    const nextYear = currentYear + 1;
+    
+    return {
+      predictions: {
+        [nextYear]: {
+          totalAttacks: 28.7, // +22.6% growth
+          avgSizeGbps: 142.3, // +26.3% growth
+          topVector: 'AI-Enhanced Multi-Vector',
+          emergingThreats: ['Quantum-resistant Attacks', 'Edge Computing Exploitation', 'AI vs AI Defense'],
+          riskFactors: ['5G Network Expansion', 'IoT Device Proliferation', 'Cloud Migration'],
+          confidence: 78
+        }
+      },
+      trendAnalysis: {
+        attackSophistication: 'Exponential increase expected',
+        geographicShift: 'Asia-Pacific dominance continuing',
+        protocolEvolution: 'Layer 7 attacks becoming primary vector',
+        defenseGap: 'Growing disparity between attack and defense capabilities'
+      }
+    };
+  }
+}
+  constructor() {
+    this.fortune500Companies = this.initializeFortune500Database();
+    this.industrySectors = this.initializeIndustrySectors();
+    this.corporateRiskProfiles = this.generateCorporateRiskProfiles();
+  }
+
+  initializeFortune500Database() {
+    return {
+      // Technology Sector
+      'Apple': { 
+        rank: 3, sector: 'Technology', revenue: 394328, employees: 164000, headquarters: 'United States',
+        vulnerabilities: 45, ddosIncidents: 12, riskScore: 78, lastIncident: '2024-01-15',
+        primaryAssets: ['iOS', 'macOS', 'Cloud Services'], marketCap: 3000000
+      },
+      'Microsoft': { 
+        rank: 14, sector: 'Technology', revenue: 211915, employees: 221000, headquarters: 'United States',
+        vulnerabilities: 89, ddosIncidents: 34, riskScore: 85, lastIncident: '2024-02-03',
+        primaryAssets: ['Windows', 'Azure', 'Office 365'], marketCap: 2800000
+      },
+      'Alphabet': { 
+        rank: 11, sector: 'Technology', revenue: 307394, employees: 190234, headquarters: 'United States',
+        vulnerabilities: 67, ddosIncidents: 23, riskScore: 72, lastIncident: '2024-01-28',
+        primaryAssets: ['Search', 'Cloud', 'Android'], marketCap: 1600000
+      },
+      'Amazon': { 
+        rank: 2, sector: 'Technology', revenue: 513983, employees: 1540000, headquarters: 'United States',
+        vulnerabilities: 123, ddosIncidents: 56, riskScore: 92, lastIncident: '2024-02-10',
+        primaryAssets: ['AWS', 'E-commerce', 'Logistics'], marketCap: 1400000
+      },
+      'Meta': { 
+        rank: 31, sector: 'Technology', revenue: 134902, employees: 77805, headquarters: 'United States',
+        vulnerabilities: 78, ddosIncidents: 45, riskScore: 88, lastIncident: '2024-02-08',
+        primaryAssets: ['Social Media', 'VR/AR', 'Advertising'], marketCap: 800000
+      },
+
+      // Financial Services
+      'JPMorgan Chase': { 
+        rank: 24, sector: 'Financial Services', revenue: 158100, employees: 293723, headquarters: 'United States',
+        vulnerabilities: 156, ddosIncidents: 89, riskScore: 95, lastIncident: '2024-02-12',
+        primaryAssets: ['Banking', 'Investment', 'Digital Banking'], marketCap: 500000
+      },
+      'Bank of America': { 
+        rank: 38, sector: 'Financial Services', revenue: 119100, employees: 216823, headquarters: 'United States',
+        vulnerabilities: 134, ddosIncidents: 67, riskScore: 91, lastIncident: '2024-01-30',
+        primaryAssets: ['Consumer Banking', 'Investment', 'Credit Cards'], marketCap: 320000
+      },
+      'Wells Fargo': { 
+        rank: 47, sector: 'Financial Services', revenue: 78500, employees: 238698, headquarters: 'United States',
+        vulnerabilities: 98, ddosIncidents: 45, riskScore: 87, lastIncident: '2024-02-05',
+        primaryAssets: ['Banking', 'Mortgages', 'Investment'], marketCap: 180000
+      },
+
+      // Healthcare
+      'UnitedHealth Group': { 
+        rank: 4, sector: 'Healthcare', revenue: 324162, employees: 440000, headquarters: 'United States',
+        vulnerabilities: 67, ddosIncidents: 23, riskScore: 76, lastIncident: '2024-01-20',
+        primaryAssets: ['Insurance', 'Healthcare Services', 'Data Analytics'], marketCap: 520000
+      },
+      'Johnson & Johnson': { 
+        rank: 40, sector: 'Healthcare', revenue: 113776, employees: 152700, headquarters: 'United States',
+        vulnerabilities: 34, ddosIncidents: 8, riskScore: 58, lastIncident: '2023-12-15',
+        primaryAssets: ['Pharmaceuticals', 'Medical Devices', 'Consumer Products'], marketCap: 460000
+      },
+
+      // Energy
+      'ExxonMobil': { 
+        rank: 7, sector: 'Energy', revenue: 344582, employees: 62000, headquarters: 'United States',
+        vulnerabilities: 45, ddosIncidents: 19, riskScore: 71, lastIncident: '2024-01-25',
+        primaryAssets: ['Oil & Gas', 'Refining', 'Chemical'], marketCap: 410000
+      },
+      'Chevron': { 
+        rank: 12, sector: 'Energy', revenue: 200494, employees: 47600, headquarters: 'United States',
+        vulnerabilities: 38, ddosIncidents: 12, riskScore: 65, lastIncident: '2024-01-10',
+        primaryAssets: ['Oil & Gas', 'Downstream', 'Chemicals'], marketCap: 350000
+      },
+
+      // Retail
+      'Walmart': { 
+        rank: 1, sector: 'Retail', revenue: 648125, employees: 2100000, headquarters: 'United States',
+        vulnerabilities: 89, ddosIncidents: 34, riskScore: 82, lastIncident: '2024-02-01',
+        primaryAssets: ['Retail Stores', 'E-commerce', 'Supply Chain'], marketCap: 480000
+      },
+      'Home Depot': { 
+        rank: 18, sector: 'Retail', revenue: 157403, employees: 504000, headquarters: 'United States',
+        vulnerabilities: 56, ddosIncidents: 23, riskScore: 75, lastIncident: '2024-01-18',
+        primaryAssets: ['Home Improvement', 'E-commerce', 'Pro Services'], marketCap: 380000
+      },
+
+      // Automotive
+      'Ford Motor': { 
+        rank: 21, sector: 'Automotive', revenue: 176191, employees: 173000, headquarters: 'United States',
+        vulnerabilities: 67, ddosIncidents: 28, riskScore: 79, lastIncident: '2024-02-07',
+        primaryAssets: ['Vehicles', 'Connected Services', 'Autonomous Driving'], marketCap: 50000
+      },
+      'General Motors': { 
+        rank: 25, sector: 'Automotive', revenue: 171800, employees: 163000, headquarters: 'United States',
+        vulnerabilities: 78, ddosIncidents: 31, riskScore: 81, lastIncident: '2024-02-04',
+        primaryAssets: ['Vehicles', 'Financial Services', 'Electric Vehicles'], marketCap: 60000
+      },
+
+      // Telecommunications
+      'Verizon': { 
+        rank: 20, sector: 'Telecommunications', revenue: 136835, employees: 117100, headquarters: 'United States',
+        vulnerabilities: 134, ddosIncidents: 78, riskScore: 94, lastIncident: '2024-02-11',
+        primaryAssets: ['Wireless', 'Broadband', '5G Network'], marketCap: 170000
+      },
+      'AT&T': { 
+        rank: 13, sector: 'Telecommunications', revenue: 120741, employees: 160700, headquarters: 'United States',
+        vulnerabilities: 156, ddosIncidents: 89, riskScore: 96, lastIncident: '2024-02-09',
+        primaryAssets: ['Wireless', 'Internet', 'Entertainment'], marketCap: 130000
+      }
+    };
+  }
+
+  initializeIndustrySectors() {
+    return {
+      'Technology': {
+        name: 'Technology',
+        companies: 5,
+        totalVulnerabilities: 402,
+        totalIncidents: 170,
+        avgRiskScore: 83,
+        riskLevel: 'High',
+        color: '#3498db',
+        primaryThreats: ['Data Breaches', 'DDoS Attacks', 'API Vulnerabilities'],
+        criticalAssets: ['Cloud Infrastructure', 'User Data', 'Platform Services']
+      },
+      'Financial Services': {
+        name: 'Financial Services',
+        companies: 3,
+        totalVulnerabilities: 388,
+        totalIncidents: 201,
+        avgRiskScore: 91,
+        riskLevel: 'Critical',
+        color: '#e74c3c',
+        primaryThreats: ['Financial Fraud', 'DDoS Attacks', 'Data Theft'],
+        criticalAssets: ['Customer Data', 'Transaction Systems', 'Digital Banking']
+      },
+      'Healthcare': {
+        name: 'Healthcare',
+        companies: 2,
+        totalVulnerabilities: 101,
+        totalIncidents: 31,
+        avgRiskScore: 67,
+        riskLevel: 'Medium',
+        color: '#27ae60',
+        primaryThreats: ['Patient Data Breaches', 'Ransomware', 'System Disruption'],
+        criticalAssets: ['Patient Records', 'Medical Devices', 'Healthcare Systems']
+      },
+      'Energy': {
+        name: 'Energy',
+        companies: 2,
+        totalVulnerabilities: 83,
+        totalIncidents: 31,
+        avgRiskScore: 68,
+        riskLevel: 'Medium',
+        color: '#f39c12',
+        primaryThreats: ['Industrial Control Systems', 'Infrastructure Attacks', 'Supply Chain'],
+        criticalAssets: ['SCADA Systems', 'Pipeline Infrastructure', 'Power Generation']
+      },
+      'Retail': {
+        name: 'Retail',
+        companies: 2,
+        totalVulnerabilities: 145,
+        totalIncidents: 57,
+        avgRiskScore: 79,
+        riskLevel: 'High',
+        color: '#9b59b6',
+        primaryThreats: ['E-commerce Attacks', 'Payment Card Fraud', 'Supply Chain'],
+        criticalAssets: ['E-commerce Platforms', 'Payment Systems', 'Customer Data']
+      },
+      'Automotive': {
+        name: 'Automotive',
+        companies: 2,
+        totalVulnerabilities: 145,
+        totalIncidents: 59,
+        avgRiskScore: 80,
+        riskLevel: 'High',
+        color: '#e67e22',
+        primaryThreats: ['Connected Vehicle Attacks', 'Manufacturing Systems', 'Supply Chain'],
+        criticalAssets: ['Vehicle Systems', 'Manufacturing', 'Connected Services']
+      },
+      'Telecommunications': {
+        name: 'Telecommunications',
+        companies: 2,
+        totalVulnerabilities: 290,
+        totalIncidents: 167,
+        avgRiskScore: 95,
+        riskLevel: 'Critical',
+        color: '#1abc9c',
+        primaryThreats: ['Network Infrastructure', 'DDoS Attacks', 'Service Disruption'],
+        criticalAssets: ['Network Infrastructure', '5G Systems', 'Customer Communications']
+      }
+    };
+  }
+
+  generateCorporateRiskProfiles() {
+    const profiles = {};
+    
+    Object.entries(this.fortune500Companies).forEach(([company, data]) => {
+      profiles[company] = {
+        overallRisk: this.calculateOverallRisk(data),
+        ddosRisk: this.calculateDDoSRisk(data),
+        financialImpact: this.calculateFinancialImpact(data),
+        reputationalRisk: this.calculateReputationalRisk(data),
+        recommendations: this.generateRecommendations(data),
+        trendAnalysis: this.generateTrendAnalysis(data)
+      };
+    });
+
+    return profiles;
+  }
+
+  calculateOverallRisk(companyData) {
+    const vulnerabilityWeight = 0.3;
+    const incidentWeight = 0.4;
+    const sectorWeight = 0.2;
+    const sizeWeight = 0.1;
+
+    const vulnScore = Math.min(companyData.vulnerabilities / 200 * 100, 100);
+    const incidentScore = Math.min(companyData.ddosIncidents / 100 * 100, 100);
+    const sectorMultiplier = companyData.sector === 'Financial Services' || companyData.sector === 'Telecommunications' ? 1.2 : 1.0;
+    const sizeScore = Math.min(companyData.employees / 2000000 * 100, 100);
+
+    return Math.round(
+      (vulnScore * vulnerabilityWeight + 
+       incidentScore * incidentWeight + 
+       sizeScore * sizeWeight) * sectorMultiplier
+    );
+  }
+
+  calculateDDoSRisk(companyData) {
+    const baseRisk = companyData.ddosIncidents * 2;
+    const sectorMultiplier = {
+      'Financial Services': 1.5,
+      'Telecommunications': 1.4,
+      'Technology': 1.3,
+      'Retail': 1.2,
+      'Healthcare': 1.0,
+      'Energy': 1.1,
+      'Automotive': 1.1
+    };
+
+    return Math.min(baseRisk * (sectorMultiplier[companyData.sector] || 1.0), 100);
+  }
+
+  calculateFinancialImpact(companyData) {
+    const revenueImpactPerIncident = companyData.revenue * 0.001; // 0.1% of revenue per major incident
+    const estimatedAnnualLoss = revenueImpactPerIncident * companyData.ddosIncidents;
+    return {
+      estimatedAnnualLoss: Math.round(estimatedAnnualLoss),
+      revenueAtRisk: Math.round((estimatedAnnualLoss / companyData.revenue) * 100 * 10) / 10,
+      costPerIncident: Math.round(revenueImpactPerIncident)
+    };
+  }
+
+  calculateReputationalRisk(companyData) {
+    const publicFacing = ['Technology', 'Retail', 'Financial Services'].includes(companyData.sector);
+    const baseRisk = companyData.ddosIncidents * (publicFacing ? 3 : 2);
+    return Math.min(baseRisk, 100);
+  }
+
+  generateRecommendations(companyData) {
+    const recommendations = [];
+    
+    if (companyData.ddosIncidents > 50) {
+      recommendations.push('Implement advanced DDoS protection with cloud-based mitigation');
+    }
+    if (companyData.vulnerabilities > 100) {
+      recommendations.push('Accelerate vulnerability management and patch deployment');
+    }
+    if (companyData.riskScore > 90) {
+      recommendations.push('Consider cyber insurance and incident response plan review');
+    }
+    if (['Financial Services', 'Telecommunications'].includes(companyData.sector)) {
+      recommendations.push('Implement industry-specific security frameworks (NIST, ISO 27001)');
+    }
+    
+    return recommendations;
+  }
+
+  generateTrendAnalysis(companyData) {
+    return {
+      riskTrend: companyData.riskScore > 85 ? 'Increasing' : companyData.riskScore > 70 ? 'Stable' : 'Decreasing',
+      vulnerabilityTrend: Math.random() > 0.5 ? 'Increasing' : 'Decreasing',
+      incidentFrequency: companyData.ddosIncidents > 40 ? 'High' : companyData.ddosIncidents > 20 ? 'Medium' : 'Low',
+      lastIncidentDays: Math.floor((new Date() - new Date(companyData.lastIncident)) / (1000 * 60 * 60 * 24))
+    };
+  }
+
+  getTopRiskCompanies(limit = 10) {
+    return Object.entries(this.fortune500Companies)
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => b.riskScore - a.riskScore)
+      .slice(0, limit);
+  }
+
+  getCompanyProfile(companyName) {
+    const company = this.fortune500Companies[companyName];
+    const riskProfile = this.corporateRiskProfiles[companyName];
+    
+    if (!company || !riskProfile) return null;
+
+    return {
+      ...company,
+      ...riskProfile,
+      name: companyName
+    };
+  }
+
+  getSectorAnalysis(sectorName) {
+    const sector = this.industrySectors[sectorName];
+    if (!sector) return null;
+
+    const companies = Object.entries(this.fortune500Companies)
+      .filter(([_, data]) => data.sector === sectorName)
+      .map(([name, data]) => ({ name, ...data }));
+
+    return {
+      ...sector,
+      companies,
+      topRiskCompanies: companies.sort((a, b) => b.riskScore - a.riskScore).slice(0, 5)
+    };
+  }
+}
+  constructor() {
+    this.companyLocations = this.initializeCompanyLocations();
+    this.ipExtractionRegex = /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g;
+  }
+
+  initializeCompanyLocations() {
+    return {
+      // Major tech companies
+      'Microsoft': { country: 'United States', city: 'Redmond', lat: 47.6740, lng: -122.1215, attacks: 234, targets: 89 },
+      'Google': { country: 'United States', city: 'Mountain View', lat: 37.4419, lng: -122.1430, attacks: 156, targets: 67 },
+      'Apple': { country: 'United States', city: 'Cupertino', lat: 37.3230, lng: -122.0322, attacks: 123, targets: 45 },
+      'Amazon': { country: 'United States', city: 'Seattle', lat: 47.6062, lng: -122.3321, attacks: 198, targets: 78 },
+      
+      // Network infrastructure companies
+      'Cisco': { country: 'United States', city: 'San Jose', lat: 37.3382, lng: -121.8863, attacks: 312, targets: 156 },
+      'Juniper': { country: 'United States', city: 'Sunnyvale', lat: 37.3688, lng: -122.0363, attacks: 89, targets: 134 },
+      'Fortinet': { country: 'United States', city: 'Sunnyvale', lat: 37.3688, lng: -122.0363, attacks: 67, targets: 89 },
+      
+      // International companies
+      'SAP': { country: 'Germany', city: 'Walldorf', lat: 49.2977, lng: 8.6412, attacks: 78, targets: 45 },
+      'Huawei': { country: 'China', city: 'Shenzhen', lat: 22.5431, lng: 114.0579, attacks: 145, targets: 234 },
+      'Samsung': { country: 'South Korea', city: 'Seoul', lat: 37.5665, lng: 126.9780, attacks: 67, targets: 89 },
+      'Sony': { country: 'Japan', city: 'Tokyo', lat: 35.6762, lng: 139.6503, attacks: 89, targets: 67 },
+      
+      // Open source projects (global distribution)
+      'Apache': { country: 'Global', city: 'Multiple', lat: 37.7749, lng: -122.4194, attacks: 456, targets: 123 },
+      'OpenSSL': { country: 'Global', city: 'Multiple', lat: 51.5074, lng: -0.1278, attacks: 234, targets: 89 },
+      'Linux': { country: 'Global', city: 'Multiple', lat: 60.1699, lng: 24.9384, attacks: 345, targets: 167 }
+    };
+  }
+
+  extractIPsFromDescription(description) {
+    const matches = description.match(this.ipExtractionRegex);
+    return matches || [];
+  }
+
+  mapVendorToLocation(vendor) {
+    // Normalize vendor name for lookup
+    const normalizedVendor = vendor.toLowerCase();
+    for (const [company, location] of Object.entries(this.companyLocations)) {
+      if (normalizedVendor.includes(company.toLowerCase())) {
+        return { company, ...location };
+      }
+    }
+    return null;
+  }
+
+  generateGeographicStatistics() {
+    const countries = {};
+    
+    Object.values(this.companyLocations).forEach(location => {
+      if (!countries[location.country]) {
+        countries[location.country] = {
+          name: location.country,
+          totalAttacks: 0,
+          totalTargets: 0,
+          companies: 0,
+          riskLevel: 'Low'
+        };
+      }
+      
+      countries[location.country].totalAttacks += location.attacks;
+      countries[location.country].totalTargets += location.targets;
+      countries[location.country].companies += 1;
+    });
+
+    // Calculate risk levels
+    Object.values(countries).forEach(country => {
+      const totalActivity = country.totalAttacks + country.totalTargets;
+      if (totalActivity > 400) country.riskLevel = 'Critical';
+      else if (totalActivity > 200) country.riskLevel = 'High';
+      else if (totalActivity > 100) country.riskLevel = 'Medium';
+      else country.riskLevel = 'Low';
+    });
+
+    return countries;
+  }
+}
+
+// Mock data for demonstration (until APIs are fully integrated)
+const generateMockDDoSData = () => {
+  const attackTypes = ['Volumetric', 'Protocol', 'Application Layer', 'Amplification', 'Botnet'];
+  const industries = ['Finance', 'Gaming', 'E-commerce', 'Government', 'Healthcare', 'Technology'];
+  const protocols = ['HTTP/HTTPS', 'DNS', 'NTP', 'SSDP', 'Memcached', 'LDAP'];
+  const vendors = ['Microsoft', 'Cisco', 'Apache', 'Google', 'Huawei', 'Juniper', 'SAP', 'Amazon'];
+  const sourceLanguages = ['English', 'Chinese', 'Russian', 'Korean', 'Arabic', 'Portuguese'];
+  const attackVectors = ['Volumetric', 'Protocol', 'Application Layer'];
+  
+  // Corporate intelligence integration
+  const corporateIntel = new CorporateIntelligence();
+  const fortune500Companies = Object.keys(corporateIntel.fortune500Companies);
+  
+  // Advanced analytics integration
+  const analyticsEngine = new AdvancedAnalyticsEngine();
+  const protocolData = analyticsEngine.getProtocolAnalysis();
+  
+  const geoIntel = new GeographicIntelligence();
+  const mockCVEs = [];
+  
+  for (let i = 0; i < 50; i++) {
+    const vendor = vendors[Math.floor(Math.random() * vendors.length)];
+    const affectedCompany = fortune500Companies[Math.floor(Math.random() * fortune500Companies.length)];
+    const sourceLanguage = sourceLanguages[Math.floor(Math.random() * sourceLanguages.length)];
+    const attackVector = attackVectors[Math.floor(Math.random() * attackVectors.length)];
+    const protocol = protocols[Math.floor(Math.random() * protocols.length)];
+    const extractedIPs = Math.random() > 0.6 ? ['192.168.1.' + Math.floor(Math.random() * 255), '10.0.0.' + Math.floor(Math.random() * 255)] : [];
+    
+    mockCVEs.push({
+      id: `CVE-2024-${1000 + i}`,
+      confidence: Math.random() * 100,
+      attackType: attackTypes[Math.floor(Math.random() * attackTypes.length)],
+      industry: industries[Math.floor(Math.random() * industries.length)],
+      protocol: protocol,
+      cvssScore: (Math.random() * 4 + 6).toFixed(1),
+      publishedDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      description: `DDoS vulnerability in ${vendor} products affecting ${affectedCompany} infrastructure via ${protocol} protocol, enabling ${attackTypes[Math.floor(Math.random() * attackTypes.length)].toLowerCase()} attacks`,
+      vendor: vendor,
+      affectedCompany: affectedCompany,
+      affectedCompanyData: corporateIntel.fortune500Companies[affectedCompany],
+      extractedIPs: extractedIPs,
+      geoLocation: geoIntel.mapVendorToLocation(vendor),
+      
+      // Advanced analytics data
+      sourceLanguage: sourceLanguage,
+      attackVector: attackVector,
+      protocolDetails: protocolData.protocols[protocol] || protocolData.protocols['HTTP/HTTPS'],
+      evolutionStage: ['Traditional', 'Advanced', 'AI-Enhanced'][Math.floor(Math.random() * 3)],
+      sophisticationLevel: (Math.random() * 4 + 3).toFixed(1), // 3.0-7.0
+      
+      corporateImpact: {
+        estimatedLoss: Math.floor(Math.random() * 50 + 10) + 'M', // 10-60M
+        downtime: Math.floor(Math.random() * 24 + 1) + ' hours',
+        affectedUsers: Math.floor(Math.random() * 10000000 + 100000).toLocaleString(),
+        reputationImpact: Math.random() > 0.5 ? 'High' : 'Medium'
+      },
+      
+      // Historical context
+      historicalTrend: Math.random() > 0.5 ? 'Increasing' : 'Stable',
+      firstSeen: new Date(Date.now() - Math.random() * 730 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Up to 2 years ago
+      
+      indicators: {
+        keywords: ['denial of service', 'amplification'],
+        cwes: ['CWE-400', 'CWE-770'],
+        networkBased: true,
+        highAvailabilityImpact: true
+      }
+    });
+  }
+  return mockCVEs;
+};
